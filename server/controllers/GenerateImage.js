@@ -78,15 +78,16 @@ export const generateImage = async (req, res, next) => {
     if (leonardoKey) {
       // Create generation job
       const createBody = {
-        // minimal request: ask for one image using the provided prompt
-        prompt,
-        num_images: 1,
-        width: 1024,
-        height: 1024,
-        ultra: false,
         alchemy: false,
+        height: 1080,
+        width: 1920,
+        modelId: "7b592283-e8a7-4c5a-9ba6-d18c31f258b9",
+        contrast: 3.5,
+        num_images: 1,
+        styleUUID: "111dc692-d470-4eec-b791-3475abac4c46",
+        prompt: `${prompt}, ultra detailed, cinematic lighting, 8k resolution, professional photography`,
+        ultra: false,
       };
-
       const createRes = await fetch(
         "https://cloud.leonardo.ai/api/rest/v1/generations",
         {
