@@ -3,34 +3,35 @@ import React from "react";
 import styled from "styled-components";
 
 const SearchBarContainer = styled.div`
-  width: 90%;
   max-width: 550px;
-  margin: 20px auto;
   display: flex;
+  width: 100%;
   border: 1px solid ${({ theme }) => theme.text_secondary + 90};
-  color: ${({ theme }) => theme.text_primary};
   border-radius: 8px;
-  padding: 12px 16px;
   cursor: pointer;
-  gap: 6px;
+  padding: 12px 16px;
+  justify-content: flex-start;
   align-items: center;
+  gap: 6px;
+  color: ${({ theme }) => theme.text_secondary};
 `;
 
-const SearchBar = () => {
+const SearchBar = ({ search, handleChange }) => {
   return (
     <SearchBarContainer>
-      <SearchOutlined />
+      <SearchOutlined sx={{ color: "inherit" }} />
       <input
         type="text"
-        placeholder="Search with prompts..."
+        placeholder="Search with prompt or name. . ."
         style={{
-          width: "100%",
           border: "none",
           outline: "none",
+          width: "100%",
+          background: "inherit",
           color: "inherit",
-          fontSize: "18px",
-          background: "transparent"
         }}
+        value={search}
+        onChange={(e) => handleChange(e)}
       />
     </SearchBarContainer>
   );

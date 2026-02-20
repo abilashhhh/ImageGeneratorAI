@@ -1,126 +1,137 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../components/SearchBar";
-import ImageCard from "../components/ImageCard";
+import ImageCard from "../components/cards/ImageCard";
+import { GetPosts } from "../api";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled.div`
-  min-height: 100vh;
-  overflow-y: auto;
-  background: ${({ theme }) => theme.bg};
-  color: ${({ theme }) => theme.text_primary};
-  padding: 30px;
-  padding-bottom: 50px;
+  padding: 30px 30px;
+  padding-bottom: 200px;
+  height: 100%;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-
   @media (max-width: 768px) {
-    padding: 10px;
+    padding: 6px 10px;
   }
+  background: ${({ theme }) => theme.background};
 `;
 
-const Headline = styled.div`
+const HeadLine = styled.div`
   font-size: 34px;
   font-weight: 500;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   color: ${({ theme }) => theme.text_primary};
-
-  @media (max-width: 768px) {
-    font-size: 22px;
-  }
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 `;
 
 const Span = styled.div`
   font-size: 30px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.primary};
-
-  @media (max-width: 768px) {
-    font-size: 20px;
-  }
+  font-weight: 800;
+  color: ${({ theme }) => theme.secondary};
 `;
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1600px;
-  padding: 32px 0;
+  max-width: 1400px;
+  padding: 32px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const Masonry = styled.div`
-  width: 100%;
-  column-count: 5;
-  column-gap: 20px;
+const CardWrapper = styled.div`
+  display: grid;
+  gap: 20px;
 
-  @media (max-width: 1400px) {
-    column-count: 4;
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
   }
 
-  @media (max-width: 1100px) {
-    column-count: 3;
+  @media (min-width: 640px) and (max-width: 1199px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  @media (max-width: 768px) {
-    column-count: 2;
-  }
-
-  @media (max-width: 480px) {
-    column-count: 1;
+  @media (max-width: 639px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 `;
-
-const items = [
-  {
-    photo: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-    prompt: "Football player running on the field",
-    author: "John Doe",
-  },
-  {
-    photo: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d",
-    prompt: "Wide stadium shot",
-    author: "Alex",
-  },
-  {
-    photo: "https://images.unsplash.com/photo-1517649763962-0c623066013b",
-    prompt: "Tall portrait football shot",
-    author: "Mike",
-  },
-  {
-    photo: "https://images.unsplash.com/photo-1502877338535-766e1452684a",
-    prompt: "Action moment",
-    author: "Sarah",
-  },
-  {
-    photo: "https://images.unsplash.com/photo-1551958219-acbc608c6377",
-    prompt: "Celebration scene",
-    author: "Chris",
-  },
-  {
-    photo: "https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf",
-    prompt: "Goal attempt",
-    author: "Emma",
-  },
-];
 
 const Home = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [filteredPost, setFilteredPost] = useState([]);
+
+  const getPosts = async () => {
+    setLoading(true);
+    await GetPosts()
+      .then((res) => {
+        setPosts(res?.data?.data);
+        setFilteredPost(res?.data?.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error?.response?.data?.message);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  useEffect(() => {
+    if (!search) {
+      setFilteredPost(posts);
+    }
+    const filteredPosts = posts.filter((post) => {
+      const promptMatch = post?.prompt?.toLowerCase().includes(search);
+      const authorMatch = post?.author?.toLowerCase().includes(search);
+
+      return promptMatch || authorMatch;
+    });
+
+    if (search) {
+      setFilteredPost(filteredPosts);
+    }
+  }, [posts, search]);
+
   return (
     <Container>
-      <Headline>
-        Explore popular posts in the community!
-        <Span>Generated with AI</Span>
-      </Headline>
-
-      <SearchBar />
-
+      <HeadLine>
+        Explore popular posts in the Community!
+        <Span>⦾ Generated with AI ⦾</Span>
+      </HeadLine>
+      <SearchBar
+        search={search}
+        handleChange={(e) => setSearch(e.target.value)}
+      />
       <Wrapper>
-        <Masonry>
-          {items.map((item, index) => (
-            <ImageCard key={index} item={item} />
-          ))}
-        </Masonry>
+        {error && <div style={{ color: "red" }}>{error}</div>}
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <CardWrapper>
+            {filteredPost.length > 0 ? (
+              <>
+                {filteredPost
+                  .slice()
+                  .reverse()
+                  .map((item, index) => (
+                    <ImageCard key={index} item={item} />
+                  ))}
+              </>
+            ) : (
+              <>No Posts Found !!</>
+            )}
+          </CardWrapper>
+        )}
       </Wrapper>
     </Container>
   );

@@ -15,7 +15,6 @@ const Button = styled.div`
   gap: 6px;
   height: min-content;
   padding: 10px 24px;
-
   @media (max-width: 600px) {
     padding: 8px 12px;
   }
@@ -23,31 +22,30 @@ const Button = styled.div`
   ${({ type, theme }) =>
     type === "secondary"
       ? `
-        background: ${theme.secondary};
-      `
+  background: ${theme.secondary};
+  `
       : `
-        background: ${theme.primary};
-      `}
+  background: ${theme.primary};
+`}
 
   ${({ isDisabled }) =>
     isDisabled &&
     `
-      opacity: 0.4;
-      cursor: not-allowed;
-    `}
+  opacity: 0.4;
+  cursor: not-allowed;
 
+  `}
   ${({ isLoading }) =>
     isLoading &&
     `
-      opacity: 0.8;
-      cursor: not-allowed;
-    `}
-
-  ${({ flex }) =>
+    opacity: 0.8;
+  cursor: not-allowed;
+`}
+${({ flex }) =>
     flex &&
     `
-      flex: 1;
-    `}
+    flex: 1;
+`}
 `;
 
 const button = ({
@@ -62,19 +60,20 @@ const button = ({
 }) => {
   return (
     <Button
-      onClick={() => !isDisabled && !isLoading && onClick && onClick()}
+      onClick={() => !isDisabled && !isLoading && onClick()}
       isDisabled={isDisabled}
       type={type}
       isLoading={isLoading}
       flex={flex}
     >
       {isLoading && (
-        <CircularProgress style={{ width: "18px", height: "18px" }} />
+        <CircularProgress
+          style={{ width: "18px", height: "18px", color: "inherit" }}
+        />
       )}
-
       {leftIcon}
       {text}
-      {isLoading && <>...</>}
+      {isLoading && <> . . .</>}
       {rightIcon}
     </Button>
   );

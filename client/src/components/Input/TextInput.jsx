@@ -17,7 +17,7 @@ const Label = styled.label`
 
 const OutlinedInput = styled.div`
   border-radius: 8px;
-  border: 0.5px solid ${({ theme }) => theme.text_secondary};
+  border: 0.5px solid ${({ theme }) => theme.text_secondary + 70};
   background-color: transparent;
   color: ${({ theme }) => theme.text_secondary};
   outline: none;
@@ -25,23 +25,20 @@ const OutlinedInput = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-
   &:focus-within {
     border-color: ${({ theme }) => theme.primary};
   }
 `;
 
 const Input = styled.input`
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: ${({ theme }) => theme.text_secondary};
+  width: 100%;
   font-size: 14px;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.text_secondary};
-    opacity: 0.6;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  color: ${({ theme }) => theme.text_secondary};
+  &:focus {
+    outline: none;
   }
 `;
 
@@ -66,7 +63,7 @@ const TextInput = ({
           columns={columns}
           placeholder={placeholder}
           value={value}
-          onChange={handelChange}
+          onChange={(e) => handelChange(e)}
         />
       </OutlinedInput>
     </Container>
